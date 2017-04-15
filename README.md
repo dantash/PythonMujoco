@@ -5,9 +5,13 @@ I was using Python in my reasearch and I had to use Mujoco Haptix. Since I could
 I added an example file, but here it is the main steps:
 
 1- import PythonMujoco
+
 2- Init the class passing the path to the mujoco dll
+
 3- create the HxCommand, HxSensor, HxRobotInfo struct
+
 4- update the HxRobotInfo struct by calling hx_robot_info() function
+
 5- send the commands by calling function hx_update
 
 If you need help or have comments please contact me.
