@@ -1,4 +1,4 @@
-from ctypes import c_float, POINTER, Structure, cdll, c_int, byref, c_char_p
+from ctypes import *
 # import timeit
 
 hxMAXMOTOR = 32
@@ -27,6 +27,24 @@ class HxCommand(Structure):
         self.gain_pos = (c_float * hxMAXMOTOR)(*data_init)
         self.gain_vel = (c_float * hxMAXMOTOR)(*data_init)
 
+class MjMocap(Structure):
+    """ creates a struct to match mjMocap """
+
+    _fields_ = [('nmocap', c_int),
+                ('time', c_float),
+                ('pos', c_float*3*mjMAXSZ),
+                ('quat', c_float*4*mjMAXSZ)]
+
+    def __init__(self,):
+        data_int = [0]
+        data_float = [0.0]
+        data_init2 = [tuple([0.0] * 3)] * hxMAXIMU
+        data_init3 = [tuple([0.0] * 4)] * hxMAXIMU
+        self.nmocap = (c_int)(*data_int)
+        self.time = (c_float)(*data_float)
+        self.pos = (c_float * 3 * mjMAXSZ)(*data_init2)
+        self.quat = (c_float * 4 * mjMAXSZ)(*data_init3)
+
 class MjState(Structure):
     """ creates a struct to match MjState """
 
@@ -38,7 +56,7 @@ class MjState(Structure):
                 ('qvel', c_float*mjMAXSZ),
                 ('act', c_float*mjMAXSZ)]
 
-    def __init__(self):
+    def __init__(self,):
         data_init = [0.0] * mjMAXSZ
         self.qpos = (c_float * mjMAXSZ)(*data_init)
         self.qvel = (c_float * mjMAXSZ)(*data_init)
@@ -128,8 +146,12 @@ class MjHxInterface(object):
         self.function_mj_get_state.argtypes = [POINTER(MjState)]
         self.function_mj_get_state.restype = c_int
 
+        self.function_mj_get_mocap = mjDll.mj_get_mocap
+        self.function_mj_get_mocap.argtypes = [POINTER(MjMocap)]
+        self.function_mj_get_mocap.restype = c_int
+
     def hx_connect(self, ip, port):
-        return self.function_hx_connect(ip, port)
+        return self.function_hx_connect(ip, int(port))
 
     def hx_robot_info(self, robot_info):
         self.function_hx_robot_info(byref(robot_info))
@@ -145,3 +167,9 @@ class MjHxInterface(object):
     def hx_read_sensors(self, sensor):
         self.function_hx_read_sensors(byref(sensor))
         return sensor
+
+    def mj_get_mocap(self, mocap):
+        self.function_mj_get_mocap(byref(mocap))
+        return mocap
+
+
