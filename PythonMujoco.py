@@ -38,8 +38,8 @@ class MjMocap(Structure):
     def __init__(self,):
         data_int = [0]
         data_float = [0.0]
-        data_init2 = [tuple([0.0] * 3)] * hxMAXIMU
-        data_init3 = [tuple([0.0] * 4)] * hxMAXIMU
+        data_init2 = [tuple([0.0] * 3)] * mjMAXSZ
+        data_init3 = [tuple([0.0] * 4)] * mjMAXSZ
         self.nmocap = (c_int)(*data_int)
         self.time = (c_float)(*data_float)
         self.pos = (c_float * 3 * mjMAXSZ)(*data_init2)
